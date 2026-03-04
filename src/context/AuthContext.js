@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
+const API_URL = 'http://localhost:5000';
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -13,36 +14,43 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Load users and current user from localStorage on mount
+  // Load auth users from json-server on mount
   useEffect(() => {
-    const savedUsers = localStorage.getItem('users');
-    const savedCurrentUser = localStorage.getItem('currentUser');
-    
-    if (savedUsers) {
-      setUsers(JSON.parse(savedUsers));
+    fetchUsers();
+    loadCurrentUserFromSession();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch(`${API_URL}/authUsers`);
+      const data = await response.json();
+      setUsers(data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      setLoading(false);
     }
-    
+  };
+
+  const loadCurrentUserFromSession = () => {
+    const savedCurrentUser = sessionStorage.getItem('currentUser');
     if (savedCurrentUser) {
       setCurrentUser(JSON.parse(savedCurrentUser));
     }
-  }, []);
+  };
 
-  // Save users to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem('users', JSON.stringify(users));
-  }, [users]);
-
-  // Save current user to localStorage whenever it changes
+  // Save current user to sessionStorage whenever it changes
   useEffect(() => {
     if (currentUser) {
-      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
     } else {
-      localStorage.removeItem('currentUser');
+      sessionStorage.removeItem('currentUser');
     }
   }, [currentUser]);
 
-  const signup = (userData) => {
+  const signup = async (userData) => {
     const { name, email, password } = userData;
 
     // Check if user already exists
@@ -60,13 +68,32 @@ export const AuthProvider = ({ children }) => {
       createdAt: new Date().toISOString(),
     };
 
-    setUsers([...users, newUser]);
-    
-    // Auto login after signup
-    const userWithoutPassword = { id: newUser.id, name: newUser.name, email: newUser.email };
-    setCurrentUser(userWithoutPassword);
+    try {
+      // Save to json-server
+      const response = await fetch(`${API_URL}/authUsers`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newUser),
+      });
 
-    return { success: true, message: 'Account created successfully!' };
+      if (response.ok) {
+        const savedUser = await response.json();
+        setUsers([...users, savedUser]);
+        
+        // Auto login after signup
+        const userWithoutPassword = { id: savedUser.id, name: savedUser.name, email: savedUser.email };
+        setCurrentUser(userWithoutPassword);
+
+        return { success: true, message: 'Account created successfully!' };
+      } else {
+        return { success: false, message: 'Failed to create account!' };
+      }
+    } catch (error) {
+      console.error('Error during signup:', error);
+      return { success: false, message: 'Error creating account. Please try again.' };
+    }
   };
 
   const login = (email, password) => {
@@ -103,6 +130,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     isAuthenticated,
+    loading,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

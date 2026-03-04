@@ -1,6 +1,9 @@
 # Automation Exercise - E-commerce Website Clone
 
-A full-featured e-commerce website clone built with React, inspired by the Automation Exercise practice website (https://automationexercise.com). This project includes multiple pages, product listings, shopping cart functionality, and user authentication features.
+A full-featured e-commerce website clone built with React, inspired by the Automation Exercise practice website (https://automationexercise.com). This project includes multiple pages, product listings, shopping cart functionality, and **file-based user authentication** with persistent data storage.
+
+## 🆕 Data Persistence
+This project uses **json-server** for file-based data persistence, allowing all users who clone the repository to share the same database. User signups and data are stored in `db.json` and committed to Git, making it perfect for collaborative testing and shared test environments.
 
 ## Features
 
@@ -24,57 +27,53 @@ A full-featured e-commerce website clone built with React, inspired by the Autom
 - 🛒 **Full shopping cart functionality** with localStorage persistence
 - 🔔 Real-time cart badge counter in header
 - 💾 Cart data persists across browser sessions
-- 🔐 **User authentication system** with signup and login
-- 👤 User session management with localStorage
+- 🔐 **File-based user authentication** with shared database
+- 👤 User session management with sessionStorage
 - 🚪 Logout functionality
 - 💳 Password validation (minimum 6 characters)
 - 🎯 34+ mock products with details
 - ✅ Success/error notifications
+- 📁 **Persistent user database** via db.json (shared across repo)
+- 🔄 **REST API backend** using json-server
 
 ## Technologies Used
 
-- **React**: Frontend library (v18)
-- **React Router DOM**: Client-side routing
+- **React**: Frontend library (v19)
+- **React Router DOM**: Client-side routing (v7)
 - **React Context API**: State management for cart and authentication
-- **LocalStorage**: Persistent data storage for cart and user data
-- **CSS3**: Custom styling with responsive design and animations
-- **Font Awesome**: Icons
+- **json-server**: File-based REST API backend (port 5000)
+- **concurrently**: Run multiple npm scripts simultaneously
+- **SessionStor & Setup
 
-## Installation
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-Navigate to the project directory:
+### 1. Clone the repository
 ```bash
-cd automation-exercise-clone
+git clone <repository-url>
+cd fe-automation-exercise-clone
 ```
 
-**Or use the full path:**
-```bash
-cd /Users/deepika/Documents/Princess/projects/self-heal/fe/automation-exercise-clone
-```
-
-Install dependencies (if not already installed):
+### 2. Install dependencies
 ```bash
 npm install
 ```
 
-## Running the Application
+This will install:
+- React and related packages
+- json-server (for file-based database)
+- concurrently (to run multiple servers)
 
-Start the development server:
+### 3. Start the application
 ```bash
 npm start
 ```
 
-**Or use the full path in one command:**
-```bash
-cd /fe/automation-exercise-clone && npm start
-```
+This command starts **both servers simultaneously**:
+- **Frontend (React)**: http://localhost:3000 (or http://localhost:3173)
+- **Backend (json-server)**: http://localhost:5000
 
-Runs the app in the development mode.\
-Open [http://localhost:3002](http://localhost:3002) to view it in your browser.
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-**Note:** The app is configured to run on port 3002 (see `.env` file). If you want to change the port, modify the `PORT` value in `.env`.
+**Note:** Hot module replacement is enabled, so you don't need to restart the server after making code changes
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
@@ -87,13 +86,22 @@ You may also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+start`
+Runs both the React app and json-server concurrently:
+- React frontend: http://localhost:3000
+- json-server API: http://localhost:5000
 
-### `npm run build`
+### `npm run client`
+Runs only the React development server on port 3000.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### `npm run server`
+Runs only the json-server on port 5000, watching `db.json` for changes.
 
-The build is minified and the filenames include the hashes.\
+### `npm test`
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run build`The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
@@ -193,19 +201,103 @@ automation-exercise-clone/
 - **User data persistence** across browser sessions
 - Password validation and security checks
 - Duplicate email prevention
-## Data Storage
+## Data Storage & Persistence
 
-This application uses **browser localStorage** for data persistence:
+This application uses a **hybrid storage approach**:
 
-- **Cart Data** (`cart` key): All shopping cart items with quantities
-- **User Data** (`users` key): Array of all registered users
-- **Session Data** (`currentUser` key): Currently logged-in user information
+### File-Based Storage (db.json)
+- **User Data**: All registered users stored in `db.json`
+- **Shared Database**: File is committed to Git, so all users share the same data
+- **API Endpoints**: 
+  - `GET/POST http://localhost:5000/users` - User operations
+  - `GET/POST http://localhost:5000/cart` - Cart data (future feature)
+- **Persistence**: Survives app restarts and is shared across repository clones
 
-**To view stored data:**
-1. Open browser DevTools (F12)
-2. Go to Application/Storage tab
-3. Expand Local Storage
-4. Click on `http://localhost:3002`
+### Browser Storage
+- **Session Storage** (`currentUser` key): Current logged-in user (session only)
+- **Local Storage** (`cart` key): Shopping cart items with quantities
+/testing project with minimal security.
+
+**Current Implementation:**
+- Passwords stored in **plain text** in `db.json`
+- File-based database (json-server) - not suitable for production
+- No encryption or hashing
+- No server-side validation
+- Data is publicly accessible in the repository
+
+**This is intentional for testing purposes** - allows:
+- Easy inspection of test data
+- SAPI Endpoints (json-server)
+
+The backend API runs on http://localhost:5000 with the following endpoints:
+
+### Users
+- `GET /users` - Get all users
+- `GET /users/:id` - Get user by ID
+- `POST /users` - Create new user
+- `PUT /users/:id` - Update user
+- `DELETE /users/:id` - Delete user
+
+### Cart (for future implementation)
+- `GET /cart` - Get cart items
+- `POST /cart` - Add cart item
+- `PUT /cart/:id` - Update cart item
+- `DELETE /cart/:id` - Delete cart item
+
+## Project Structure
+
+```
+automation-exercise-clone/
+├── db.json                    # File-based database (json-server)
+├── public/
+│   └── index.html
+├── src/
+│   ├── components/
+│   │   ├── Header.js
+│   │   ├── Header.css
+│   │   ├── Footer.js
+│   │   ├── Footer.css
+│   │   ├── ProductCard.js
+│   │   ├── ProductCard.css
+│   │   ├── CartNotification.js
+│   │   └── CartNotification.css
+│   ├── context/
+│   │   ├── CartContext.js         # Shopping cart state
+│   │   └── AuthContext.js         # Auth state + API calls
+│   ├── pages/
+│   │   ├── Home.js
+│   │   ├── Home.css
+│   │   ├── Products.js
+│   Test Data:
+- Check `db.json` to see all registered users
+- Create test accounts as needed
+- Users are shared across all repository clones
+- Data persists across app restartsATA_PERSISTENCE.md        # Detailed persistence documentation
+└── package.json
+```
+
+## Future Enhancements
+
+- Product detail page with full product information
+- Real backend API with production-grade database
+- Secure password hashing and JWT authentication
+- Payment gateway integration (Stripe, PayPal)
+- Order history and tracking
+- User profile management with address book
+- Product reviews and ratings system
+- Wishlist functionality
+- Product recommendations
+- Email notifications
+- Admin dashboard
+- Inventory management
+- Multiple payment methods
+- Order status trackingord123",
+      "createdAt": "2026-03-04T10:30:00.000Z"
+    }
+  ],
+  "cart": []
+}
+```
 ## Security Note
 
 ⚠️ **Important**: This is a demonstration project with client-side only storage.

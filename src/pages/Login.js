@@ -54,20 +54,22 @@ const Login = () => {
     <div className="login-page">
       <div className="login-container">
         {message.text && (
-          <div className={`message ${message.type}`}>
+          <div className={`message ${message.type}`} data-testid="auth-message">
             {message.text}
           </div>
         )}
         <div className="login-section">
           <div className="form-wrapper">
             <h2>Login to your account</h2>
-            <form onSubmit={handleLogin}>
+            <form onSubmit={handleLogin} data-testid="login-form">
               <input
                 type="email"
                 placeholder="Email Address"
                 value={loginData.email}
                 onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                 required
+                aria-label="Login email"
+                data-testid="login-email"
               />
               <input
                 type="password"
@@ -75,8 +77,10 @@ const Login = () => {
                 value={loginData.password}
                 onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                 required
+                aria-label="Login password"
+                data-testid="login-password"
               />
-              <button type="submit" className="btn-submit">Login</button>
+              <button type="submit" className="btn-submit" data-testid="login-submit">Login</button>
             </form>
           </div>
         </div>
@@ -88,13 +92,15 @@ const Login = () => {
         <div className="signup-section">
           <div className="form-wrapper">
             <h2>New User Signup!</h2>
-            <form onSubmit={handleSignup}>
+            <form onSubmit={handleSignup} data-testid="signup-form">
               <input
                 type="text"
                 placeholder="Name"
                 value={signupData.name}
                 onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
                 required
+                aria-label="Signup name"
+                data-testid="signup-name"
               />
               <input
                 type="email"
@@ -102,6 +108,8 @@ const Login = () => {
                 value={signupData.email}
                 onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
                 required
+                aria-label="Signup email"
+                data-testid="signup-email"
               />
               <input
                 type="password"
@@ -110,8 +118,10 @@ const Login = () => {
                 onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
                 required
                 minLength="6"
+                aria-label="Signup password"
+                data-testid="signup-password"
               />
-              <button type="submit" className="btn-submit">Signup</button>
+              <button type="submit" className="btn-submit" data-testid="signup-submit">Signup</button>
             </form>
           </div>
         </div>

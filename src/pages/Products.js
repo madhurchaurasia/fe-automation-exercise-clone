@@ -43,8 +43,10 @@ const Products = () => {
               placeholder="Search Product"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Search products"
+              data-testid="products-search-input"
             />
-            <button type="submit">
+            <button type="submit" data-testid="products-search-submit" aria-label="Submit product search">
               <i className="fa fa-search"></i>
             </button>
           </form>
@@ -55,7 +57,7 @@ const Products = () => {
         <aside className="sidebar">
           <div className="sidebar-section">
             <h2>CATEGORY</h2>
-            <ul className="category-list">
+            <ul className="category-list" data-testid="products-category-list">
               {categories.map((category, index) => (
                 <li 
                   key={index}
@@ -69,7 +71,7 @@ const Products = () => {
           </div>
           <div className="sidebar-section">
             <h2>BRANDS</h2>
-            <ul className="brand-list">
+            <ul className="brand-list" data-testid="products-brand-list">
               {brands.map((brand, index) => (
                 <li 
                   key={index}
@@ -86,13 +88,13 @@ const Products = () => {
         <main className="products-main">
           <h2 className="section-title">ALL PRODUCTS</h2>
           {filteredProducts.length > 0 ? (
-            <div className="products-grid">
+            <div className="products-grid" data-testid="products-grid">
               {filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
           ) : (
-            <div className="no-products">
+            <div className="no-products" data-testid="products-empty-state">
               <p>No products found matching your criteria.</p>
             </div>
           )}

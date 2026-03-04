@@ -3,261 +3,318 @@
 Status: Active  
 Last updated: 2026-03-04
 
-This document is the single source of truth for automating this project with Playwright.
-When app behavior changes, update this document first, then tests.
+This file defines the FE automation contract for the separate Playwright repository.
+When FE behavior changes, update this file in the same PR.
 
 ---
 
-## 1) App Overview for Automation
+## 1) Scope and Ownership
+
+This repository:
+- Owns frontend behavior and stable automation hooks only.
+- Should remain deterministic and automation-friendly.
+
+Separate Playwright repository:
+- Owns all Playwright test logic, fixtures, assertions, and reporter setup.
+
+Non-goal in this repo:
+- Do not add or maintain Playwright test suites here as part of normal workflow.
+
+---
+
+## 2) Runtime and App Overview
 
 Frontend:
-- React app
-- Default URL: http://localhost:5173
+- React app (`react-scripts`)
+- Port comes from `.env` (`PORT=5173`)
+- Base URL: `http://localhost:5173`
 
 Backend:
-- json-server
-- Base URL: http://localhost:5000
-- Data file: db/db.json
+- `json-server`
+- Base URL: `http://localhost:5000`
+- Data file: `db/db.json`
 
-Current routes:
-- /
-- /products
-- /login
-- /cart
-- /test-cases
-- /api-testing
-- /contact
+Start commands:
+- Full stack: `npm start`
+- FE only: `npm run client`
+- API only: `npm run server`
 
-Important state behavior:
-- Signup/Login users are from API resource `authUsers`
-- Cart is currently browser localStorage based (not API-based)
+Routes:
+- `/`
+- `/products`
+- `/login`
+- `/cart`
+- `/test-cases`
+- `/api-testing`
+- `/contact`
+
+State behavior:
+- Auth users are loaded from API resource `authUsers`.
+- Cart is localStorage based (`cart` key), not API based.
+- `/test-cases` is a dedicated deterministic QA Failure Lab.
 
 ---
 
-## 2) API Endpoints used by UI
+## 3) API Endpoints Used by UI
 
 Auth users:
-- GET /authUsers
-- POST /authUsers
-- GET /authUsers/:id
-- PUT /authUsers/:id
-- PATCH /authUsers/:id
-- DELETE /authUsers/:id
+- `GET /authUsers`
+- `POST /authUsers`
+- `GET /authUsers/:id`
+- `PUT /authUsers/:id`
+- `PATCH /authUsers/:id`
+- `DELETE /authUsers/:id`
 
-Cart items resource exists but UI does not yet use it:
-- GET /cartItems
-- POST /cartItems
-- GET /cartItems/:id
-- PUT /cartItems/:id
-- PATCH /cartItems/:id
-- DELETE /cartItems/:id
-
-See full curl examples in api.md.
+Cart API resource exists but is not used by current cart UI:
+- `GET /cartItems`
+- `POST /cartItems`
+- `GET /cartItems/:id`
+- `PUT /cartItems/:id`
+- `PATCH /cartItems/:id`
+- `DELETE /cartItems/:id`
 
 ---
 
-## 3) Recommended Test Scope
+## 4) Selector Strategy
 
-### Smoke
-1. Home page loads and header links are visible
-2. Products page loads and product cards are rendered
-3. Login page loads and both forms are visible
-4. Cart page opens and empty state is visible (fresh state)
+Priority order:
+1. `getByTestId()`
+2. `getByRole()`
+3. `getByText()`
+4. `getByPlaceholder()`
+5. CSS selectors only as fallback
 
-### Auth Flow
-1. Signup with unique email succeeds
-2. Duplicate signup fails with validation message
-3. Login with valid credentials succeeds
-4. Login with invalid credentials shows error
-5. Logout flow works with browser confirm dialog
-
-### Product + Cart Flow
-1. Add product to cart from home page
-2. Add product to cart from products page
-3. Cart badge increments
-4. Quantity increase/decrease works
-5. Remove item from cart works
-6. Clear cart works
-
-### Search & Filters
-1. Search by product name
-2. Category filter
-3. Brand filter
-4. Search + category + brand combined
+Rule:
+- Prefer FE-provided stable hooks over brittle structure/text locators.
 
 ---
 
-## 4) Selector Strategy (Use this order)
+## 5) Stable FE Hooks by Page
 
-Preferred:
-1. `getByRole()`
-2. `getByText()`
-3. `getByPlaceholder()`
-4. Stable class selectors only when needed
+Home (`/`):
+- `home-hero`
+- `home-test-cases-button`
+- `home-api-practice-button`
+- `featured-products`
+- `recommended-products`
 
-Examples:
-- Login nav link: `page.getByRole('link', { name: /signup \/ login/i })`
-- Login form email: `page.locator('.login-section input[placeholder="Email Address"]')`
-- Signup form email: `page.locator('.signup-section input[placeholder="Email Address"]')`
-- Signup submit: `page.locator('.signup-section button:has-text("Signup")')`
-- Cart badge: `page.locator('.cart-badge')`
-- Add to cart (first card): `page.locator('.product-card').first().locator('.add-to-cart-btn')`
+Products (`/products`):
+- `products-search-input`
+- `products-search-submit`
+- `products-category-list`
+- `products-brand-list`
+- `products-grid`
+- `products-empty-state`
 
-Note:
-Two email/password fields exist on login page (login + signup). Scope locators by section to avoid ambiguity.
+Product card hooks:
+- `product-card`
+- `product-overlay`
+- `add-to-cart-button`
+- `view-product-button`
+- `product-name`
+- `product-price`
+
+Product card attributes:
+- `data-product-id` on card-level and key controls
+
+Login (`/login`):
+- `login-form`
+- `login-email`
+- `login-password`
+- `login-submit`
+- `signup-form`
+- `signup-name`
+- `signup-email`
+- `signup-password`
+- `signup-submit`
+- `auth-message`
+
+Cart (`/cart`):
+- `cart-empty-state`
+- `cart-table`
+- `cart-row`
+- `cart-quantity-control`
+- `cart-quantity-input`
+- `cart-remove-button`
+- `clear-cart-button`
+- `cart-total`
+- `checkout-button`
+
+Cart notification:
+- `cart-notification`
+- `cart-notification-message`
 
 ---
 
-## 5) Test Data Strategy
+## 6) Recommended Test Scope (for Separate Playwright Repo)
 
-Use deterministic test users with timestamp suffix:
-- Email format: `qa+<timestamp>@example.com`
+Smoke:
+1. Core routes render and key hooks are visible.
+2. Header navigation links render.
 
-Keep one stable seed user in db/db.json for quick login tests if needed.
+Auth:
+1. Signup success with unique email.
+2. Duplicate signup error.
+3. Login success.
+4. Login invalid credentials error.
+5. Logout with confirm dialog.
 
-Before each test (recommended):
-- Clear localStorage cart state
-- Optionally clean auth test users created by automation
+Products + Cart:
+1. Add-to-cart from home and products.
+2. Cart badge/count behavior.
+3. Quantity increase/decrease.
+4. Remove item.
+5. Clear cart.
+6. Cart totals and empty state.
+
+Search and filters:
+1. Search by name.
+2. Category filter.
+3. Brand filter.
+4. Combined search + filters.
 
 ---
 
-## 6) State Reset Strategy
+## 7) State Reset Strategy
 
-### Browser state reset
-In `test.beforeEach`:
+Browser reset before each test:
 - `await page.goto('/')`
 - `await page.evaluate(() => { localStorage.clear(); sessionStorage.clear(); })`
 
-### API cleanup (optional but recommended)
-- GET /authUsers?email=<test_email>
-- DELETE each returned id
+Optional API cleanup:
+- Delete test users from `authUsers` by unique email pattern.
 
-This keeps test runs idempotent.
-
----
-
-## 7) Playwright Project Setup
-
-Install:
-- `npm i -D @playwright/test`
-- `npx playwright install`
-
-Suggested folders:
-- tests/e2e/
-- tests/fixtures/
-- tests/utils/
-
-Suggested files:
-- playwright.config.js
-- tests/e2e/auth.spec.js
-- tests/e2e/cart.spec.js
-- tests/e2e/products.spec.js
+Recommended test email format:
+- `qa+<timestamp>@example.com`
 
 ---
 
-## 8) Suggested playwright.config.js values
+## 8) QA Failure Lab (`/test-cases`)
 
-- `baseURL`: http://localhost:5173
-- `trace`: on-first-retry
-- `screenshot`: only-on-failure
-- `video`: retain-on-failure
-- webServer (recommended):
-  - command: `npm start`
-  - url: http://localhost:5173
-  - reuseExistingServer: true
-  - timeout: 120000
+Purpose:
+- Controlled deterministic surface for reproducing complex Playwright failures.
+- Isolated from normal business pages.
 
----
+Deep-link query params:
+- `scenario` (required for deterministic setup)
+- `mode` (optional; defaults to scenario default mode)
+- `duration` (optional ms; clamped to `500..60000` when scenario supports duration)
+- `autoStart` (optional; `1` or `true` for scenarios supporting auto-start)
 
-## 9) High-Value Assertions
+Examples:
+- `/test-cases?scenario=ELEMENT_OBSCURED`
+- `/test-cases?scenario=ASSERT_TIMEOUT&mode=never-resolve`
+- `/test-cases?scenario=TEST_TIMEOUT&duration=40000&autoStart=1`
 
-Auth:
-- Success message appears after signup/login
-- User name appears in header after auth
-- Signup/Login link hidden after auth
+Core QA hooks:
+- `scenario-list`
+- `scenario-card-<CODE>`
+- `active-scenario`
+- `scenario-mode`
+- `scenario-status`
+- `scenario-reset`
+- `scenario-target`
 
-Cart:
-- Cart badge count reflects quantity changes
-- Row total and cart total update correctly
-- Empty cart message shown when cart has no items
-
-Products:
-- Search reduces visible product cards
-- Filtered products match selected category/brand
-
----
-
-## 10) Known Risks / Flaky Areas
-
-1. Buttons and links have repeated text in some places
-2. Login page has duplicate placeholders in two forms
-3. Success messages disappear after navigation timeout
-4. Confirm dialogs (logout/remove) must be handled explicitly
-
-Mitigation:
-- Use scoped locators
-- Add dialog handlers in tests
-- Avoid brittle nth-child selectors
+Scenario metadata attributes:
+- `data-scenario-code` on active workspace
+- `data-scenario-mode` on active workspace
+- `data-scenario-state` on scenario status
 
 ---
 
-## 11) Dialog Handling
+## 9) QA Scenario Catalog
 
-For logout/remove flows, handle native confirm:
+Scenarios currently available:
+- `TEST_TIMEOUT`
+- `ASSERT_TIMEOUT`
+- `ACTION_TIMEOUT`
+- `ELEMENT_NOT_VISIBLE`
+- `ELEMENT_NOT_STABLE`
+- `ELEMENT_OBSCURED`
+- `ELEMENT_DISABLED`
+- `LOCATOR_NOT_FOUND`
+- `LOCATOR_MULTIPLE_MATCHES`
+- `STALE_DOM_REFERENCE`
+- `NAVIGATION_TIMEOUT`
+- `NETWORK_REQUEST_FAILED`
+- `PAGE_CLOSED`
+- `APP_RUNTIME_ERROR`
+
+Current default modes:
+- `TEST_TIMEOUT`: `long-load`
+- `ASSERT_TIMEOUT`: `never-resolve`
+- `ACTION_TIMEOUT`: `blocked-overlay`
+- `ELEMENT_NOT_VISIBLE`: `display-none`
+- `ELEMENT_NOT_STABLE`: `continuous`
+- `ELEMENT_OBSCURED`: `full-overlay`
+- `ELEMENT_DISABLED`: `delayed-enable`
+- `LOCATOR_NOT_FOUND`: `not-mounted`
+- `LOCATOR_MULTIPLE_MATCHES`: `duplicate-buttons`
+- `STALE_DOM_REFERENCE`: `auto-remount`
+- `NAVIGATION_TIMEOUT`: `infinite-loading-shell`
+- `NETWORK_REQUEST_FAILED`: `success`
+- `PAGE_CLOSED`: `auto-close-window`
+- `APP_RUNTIME_ERROR`: `throw-on-mount`
+
+---
+
+## 10) Known Risks and Flake Mitigation
+
+Risks:
+1. Login page has duplicate email/password concepts (login and signup sections).
+2. Success banners are transient.
+3. Native confirm dialogs block flow if not handled.
+4. Popup-related scenarios can fail in restricted browser environments.
+
+Mitigations:
+- Prefer `data-testid` hooks over text-only locators.
+- Use scoped locators for login/signup forms.
+- Explicitly handle dialogs in tests.
+- Keep popup lifecycle assertions tolerant to environment restrictions.
+
+Dialog handling example:
 - `page.on('dialog', d => d.accept())`
 
-Without this, tests can hang.
+---
+
+## 11) Suggested Playwright Config (Separate Repo)
+
+Recommended values:
+- `baseURL`: `http://localhost:5173`
+- `trace`: `on-first-retry`
+- `screenshot`: `only-on-failure`
+- `video`: `retain-on-failure`
+
+If you manage app startup from Playwright:
+- web server command: `npm start`
+- expected URL: `http://localhost:5173`
+- `reuseExistingServer: true`
+- startup timeout: `120000`
 
 ---
 
-## 12) CI Execution Guide
+## 12) FE Validation Commands (This Repo)
 
-Run all tests:
-- `npx playwright test`
+Use these to verify FE contract before Playwright-repo updates:
+- `CI=1 npm test`
+- `npm run build`
 
-Run specific suite:
-- `npx playwright test tests/e2e/auth.spec.js`
-
-Debug mode:
-- `npx playwright test --ui`
-
-Headed mode:
-- `npx playwright test --headed`
+If these fail, fix FE first, then update Playwright selectors/tests in the separate repo.
 
 ---
 
-## 13) Change Management (Important)
+## 13) Change Management Checklist
 
-When app changes, update this file in the same PR with:
+When FE changes are merged, update this file with:
 1. Route changes
-2. Endpoint changes
-3. Selector changes
-4. New flows and assertions
-5. Data reset changes
+2. Selector additions/removals
+3. Auth/cart state behavior changes
+4. QA Failure Lab scenario/mode/query-param changes
+5. Known flake risks and mitigations
 
-Update checklist block:
+Checklist:
 - [ ] Routes reviewed
-- [ ] Endpoints reviewed
 - [ ] Selectors reviewed
-- [ ] Test data strategy reviewed
-- [ ] Flaky risks updated
-
----
-
-## 14) First Automation Backlog
-
-Priority P0:
-1. auth.spec.js (signup/login/logout)
-2. cart.spec.js (add/update/remove/clear)
-3. products.spec.js (search/filter)
-
-Priority P1:
-1. navigation.spec.js
-2. placeholder-pages.spec.js
-3. visual-smoke.spec.js
-
----
-
-If you want, next I can generate:
-1) Playwright config, and  
-2) P0 test files with working selectors from this document.
+- [ ] API/state behavior reviewed
+- [ ] QA lab contract reviewed
+- [ ] Risk notes reviewed

@@ -30,7 +30,7 @@ const Login = () => {
     }
   };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     
     if (!signupData.password || signupData.password.length < 6) {
@@ -38,7 +38,7 @@ const Login = () => {
       return;
     }
     
-    const result = signup(signupData);
+    const result = await signup(signupData);
     
     if (result.success) {
       setMessage({ text: result.message, type: 'success' });

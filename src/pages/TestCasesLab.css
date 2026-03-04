@@ -1,0 +1,389 @@
+.test-cases-lab {
+  padding: 24px;
+  background: #f6f6f6;
+  min-height: 80vh;
+}
+
+.lab-header {
+  margin-bottom: 24px;
+}
+
+.lab-header h1 {
+  margin-bottom: 8px;
+}
+
+.lab-body {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .lab-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+.scenario-catalog {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.scenario-list {
+  display: grid;
+  gap: 12px;
+}
+
+.scenario-card {
+  border: 1px solid #e4e4e4;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fafafa;
+}
+
+.scenario-card.active {
+  border-color: #ff4d6d;
+  background: #fff0f4;
+}
+
+.scenario-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.scenario-code {
+  font-weight: 700;
+}
+
+.scenario-summary {
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.scenario-activate-btn {
+  background: #ff4d6d;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.scenario-workspace {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.scenario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.scenario-severity {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.severity-high {
+  background: #ffe3e3;
+  color: #b30000;
+}
+
+.severity-medium {
+  background: #fff4d6;
+  color: #a15c00;
+}
+
+.severity-low {
+  background: #e4f6ed;
+  color: #1d6b4b;
+}
+
+.severity-critical {
+  background: #ffccd5;
+  color: #8b0000;
+}
+
+.scenario-details {
+  border-top: 1px solid #ececec;
+  padding-top: 12px;
+}
+
+.scenario-mode {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.scenario-meaning {
+  color: #444;
+  margin-bottom: 8px;
+}
+
+.scenario-hint {
+  color: #555;
+  font-size: 13px;
+}
+
+.scenario-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .scenario-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.scenario-controls {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.scenario-controls label {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  gap: 4px;
+}
+
+.scenario-controls select,
+.scenario-controls input[type="number"],
+.scenario-controls input[type="text"] {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #d0d0d0;
+}
+
+.qa-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.scenario-reset {
+  background: #333;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.scenario-status {
+  margin-top: 12px;
+  background: #f7f7f7;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-weight: 600;
+}
+
+.scenario-stage {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px dashed #e0e0e0;
+  border-radius: 8px;
+  background: #fcfcfc;
+}
+
+.scenario-block {
+  display: grid;
+  gap: 12px;
+}
+
+.scenario-primary-btn {
+  background: #1d4ed8;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.qa-target-wrapper {
+  position: relative;
+  width: fit-content;
+}
+
+.qa-target-btn {
+  background: #0f172a;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.qa-target-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.qa-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 0, 0, 0.25);
+  color: #8b0000;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+}
+
+.qa-toast {
+  position: absolute;
+  right: -20px;
+  bottom: -20px;
+  background: #ffe0e0;
+  color: #a10000;
+  padding: 6px 10px;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.qa-banner {
+  position: absolute;
+  top: -8px;
+  left: 0;
+  right: 0;
+  background: #fff0b3;
+  color: #a15c00;
+  padding: 4px 8px;
+  text-align: center;
+  border-radius: 6px;
+}
+
+.qa-hidden-target {
+  padding: 10px;
+  background: #ffebee;
+  border-radius: 6px;
+}
+
+.qa-collapsed {
+  height: 0;
+  overflow: hidden;
+}
+
+.qa-tabs {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.qa-tab-controls {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.qa-tab-controls button {
+  background: #e5e7eb;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.qa-tab-controls button.active {
+  background: #1d4ed8;
+  color: #fff;
+}
+
+.qa-tab-panel {
+  padding: 12px;
+}
+
+.qa-moving-target {
+  width: 180px;
+  padding: 12px;
+  background: #e0f2fe;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.qa-moving-target.is-moving {
+  animation-name: qa-wiggle;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.qa-moving-target.is-stable {
+  animation: none;
+}
+
+@keyframes qa-wiggle {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(16px);
+  }
+  50% {
+    transform: translateX(-16px);
+  }
+  75% {
+    transform: translateX(8px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.qa-target-box {
+  padding: 10px 12px;
+  background: #f0f9ff;
+  border-radius: 6px;
+  border: 1px solid #bae6fd;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.qa-filter-box {
+  display: grid;
+  gap: 6px;
+  max-width: 240px;
+}
+
+.qa-dup-group {
+  display: grid;
+  gap: 8px;
+}
+
+.qa-nav-shell {
+  padding: 12px;
+  border-radius: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.qa-shell-header {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.qa-shell-content {
+  color: #64748b;
+}
+
+.qa-error-boundary {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #fecaca;
+  background: #fff1f2;
+}

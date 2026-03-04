@@ -1,14 +1,16 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { productsData, categories, brands } from '../data/productsData';
 import './Home.css';
 
 const Home = () => {
+  const navigate = useNavigate();
   const featuredProducts = productsData.slice(0, 16);
 
   return (
     <div className="home-page">
-      <div className="hero-section">
+      <div className="hero-section" data-testid="home-hero">
         <div className="hero-content">
           <div className="hero-text">
             <h1>
@@ -22,8 +24,21 @@ const Home = () => {
               them brush up their automation skills.
             </p>
             <div className="hero-buttons">
-              <button className="btn-hero">Test Cases</button>
-              <button className="btn-hero">APIs list for practice</button>
+              <button
+                className="btn-hero"
+                type="button"
+                data-testid="home-test-cases-button"
+                onClick={() => navigate('/test-cases')}
+              >
+                Test Cases
+              </button>
+              <button
+                className="btn-hero"
+                type="button"
+                data-testid="home-api-practice-button"
+              >
+                APIs list for practice
+              </button>
             </div>
           </div>
           <div className="hero-image">
@@ -61,7 +76,7 @@ const Home = () => {
 
         <main className="products-section">
           <h2 className="section-title">FEATURES ITEMS</h2>
-          <div className="products-grid">
+          <div className="products-grid" data-testid="featured-products">
             {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -72,7 +87,7 @@ const Home = () => {
       <div className="recommended-section">
         <h2 className="section-title">RECOMMENDED ITEMS</h2>
         <div className="recommended-carousel">
-          <div className="products-grid">
+          <div className="products-grid" data-testid="recommended-products">
             {productsData.slice(3, 6).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

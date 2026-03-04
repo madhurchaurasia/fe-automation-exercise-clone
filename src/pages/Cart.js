@@ -24,7 +24,7 @@ const Cart = () => {
       <div className="cart-page">
         <div className="cart-container">
           <h2>Shopping Cart</h2>
-          <div className="empty-cart">
+          <div className="empty-cart" data-testid="cart-empty-state">
             <i className="fa fa-shopping-cart"></i>
             <p>Your cart is empty</p>
             <Link to="/products">
@@ -41,7 +41,7 @@ const Cart = () => {
       <div className="cart-container">
         <h2>Shopping Cart</h2>
         <div className="cart-content">
-          <table className="cart-table">
+          <table className="cart-table" data-testid="cart-table">
             <thead>
               <tr>
                 <th>Product</th>
@@ -53,15 +53,15 @@ const Cart = () => {
             </thead>
             <tbody>
               {cartItems.map((item) => (
-                <tr key={item.id}>
+                <tr key={item.id} data-testid="cart-row" data-product-id={item.id}>
                   <td className="product-cell">
                     <img src={item.image} alt={item.name} />
                     <span>{item.name}</span>
                   </td>
                   <td>Rs. {item.price}</td>
                   <td>
-                    <div className="quantity-control">
-                      <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>
+                    <div className="quantity-control" data-testid="cart-quantity-control" data-product-id={item.id}>
+                      <button onClick={() => updateQuantity(item.id, item.quantity - 1)} aria-label="Decrease quantity">
                         <i className="fa fa-minus"></i>
                       </button>
                       <input
@@ -69,15 +69,24 @@ const Cart = () => {
                         value={item.quantity}
                         onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                         min="1"
+                        data-testid="cart-quantity-input"
+                        data-product-id={item.id}
+                        aria-label="Cart quantity"
                       />
-                      <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+                      <button onClick={() => updateQuantity(item.id, item.quantity + 1)} aria-label="Increase quantity">
                         <i className="fa fa-plus"></i>
                       </button>
                     </div>
                   </td>
                   <td className="total-cell">Rs. {item.price * item.quantity}</td>
                   <td>
-                    <button className="remove-btn" onClick={() => handleRemove(item.id)}>
+                    <button
+                      className="remove-btn"
+                      onClick={() => handleRemove(item.id)}
+                      data-testid="cart-remove-button"
+                      data-product-id={item.id}
+                      aria-label="Remove item"
+                    >
                       <i className="fa fa-trash"></i>
                     </button>
                   </td>
@@ -93,11 +102,11 @@ const Cart = () => {
                   <i className="fa fa-arrow-left"></i> Continue Shopping
                 </button>
               </Link>
-              <button className="clear-cart-btn" onClick={clearCart}>
+              <button className="clear-cart-btn" onClick={clearCart} data-testid="clear-cart-button">
                 <i className="fa fa-trash"></i> Clear Cart
               </button>
             </div>
-            <div className="cart-total">
+            <div className="cart-total" data-testid="cart-total">
               <h3>Cart Total</h3>
               <div className="total-row">
                 <span>Subtotal:</span>
@@ -111,7 +120,7 @@ const Cart = () => {
                 <span>Total:</span>
                 <span>Rs. {getCartTotal()}</span>
               </div>
-              <button className="checkout-btn">
+              <button className="checkout-btn" data-testid="checkout-button">
                 Proceed to Checkout
               </button>
             </div>

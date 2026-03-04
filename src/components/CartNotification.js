@@ -22,9 +22,9 @@ const CartNotification = () => {
   if (!notification) return null;
 
   return (
-    <div className="cart-notification">
+    <div className="cart-notification" data-testid="cart-notification">
       <i className="fa fa-check-circle"></i>
-      <span>{notification}</span>
+      <span data-testid="cart-notification-message">{notification}</span>
     </div>
   );
 };
